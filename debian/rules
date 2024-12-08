@@ -1,0 +1,28 @@
+#!/usr/bin/make -f
+
+PACKAGE := guideos-updater
+
+%:
+	dh $@
+
+override_dh_install:
+	# Erstellen der notwendigen Verzeichnisse
+	mkdir -p debian/$(PACKAGE)/usr/lib/guideos-updater
+	mkdir -p debian/$(PACKAGE)/usr/share/doc/$(PACKAGE)
+
+	# Kopieren der Dateien
+	cp LICENSE debian/$(PACKAGE)/usr/share/doc/$(PACKAGE)/LICENSE
+	cp -r guideos-updater debian/$(PACKAGE)/usr/lib/guideos-updater
+	
+	# Erstellen der .desktop-Datei
+	#./create_desktop_files.sh
+
+	# Setzen der Berechtigungen
+	chmod +x debian/$(PACKAGE)/usr/lib/guideos-updater/guideos-updater.py
+
+	# Erstellen der /bin/primo-di-tutto Datei
+	echo "#!/bin/bash" > debian/$(PACKAGE)/usr/bin/guideos-updater
+	echo '/usr/lib/guideos-updater/guideos-updater.py "$@"' >> debian/$(PACKAGE)/usr/bin/guideos-updater
+	chmod +x debian/$(PACKAGE)/usr/bin/guideos-updater
+
+	dh_install
