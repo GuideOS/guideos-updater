@@ -5,11 +5,12 @@ from tkinter import ttk
 import tkinter as tk
 import subprocess
 import os
+from tkinter import Scrollbar, Listbox
 
 class MainApplication(tk.Tk):
     def __init__(self):
         super().__init__(className="guideos-updater")
-        self.title("Aktualisierung")
+        self.title("GuideOS Updater")
 
         script_dir = os.path.dirname(os.path.abspath(__file__))
         application_path = os.path.dirname(script_dir)
@@ -19,7 +20,7 @@ class MainApplication(tk.Tk):
         self.tk.call("set_theme", "light")
         # self["background"] = maincolor
         app_width = 600
-        app_height = 350
+        app_height = 500
         # Define Screen
         screen_width = self.winfo_screenwidth()
         screen_height = self.winfo_screenheight()
@@ -35,21 +36,40 @@ class MainApplication(tk.Tk):
         self.grid_columnconfigure(0, weight=1)
 
 
+
         self.term_logo = PhotoImage(
             file=f"{application_path}/guideos-updater/guide-os-logo-symbolic-light.png"
         )
 
         # Text-Widget hinzufügen
-        self.info_text = ttk.Label(self,wraplength=550,text="Möchtest du ein System aktualisieren?")
-        self.info_text.grid(row=0, column=0, padx=20, pady=10, sticky="ew")
+        #self.info_text = ttk.Label(self,wraplength=550,text="Möchtest du dein System aktualisieren?")
+        #self.info_text.grid(row=0, column=0, padx=20, pady=10, sticky="ew")
+
+
+        self.frame = ttk.LabelFrame(self, text="Aktualisierungen",padding=10)
+        self.frame.grid(row=0, column=0, padx=20, pady=10,sticky="ew")
+
+        self.scrollbar = ttk.Scrollbar(self.frame)
+        self.scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+
+        self.listbox = Listbox(self.frame, yscrollcommand=self.scrollbar.set, height=10, width=100,borderwidth=0, highlightthickness=0,)
+        self.listbox.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+
+        self.scrollbar.config(command=self.listbox.yview)
+
+
+
+
+
 
         # Button hinzufügen
-        self.button = ttk.Button(self, text="System aktualisieren", command=self.all_up_action)
-        self.button.grid(row=1, column=0, padx=20, pady=10,sticky="ew")
-
+        self.button = ttk.Button(self, text="Aktualisieren", command=self.all_up_action)
+        self.button.grid(row=2, column=0, padx=20, pady=10,sticky="ew")
+        # Initiale Updates laden
+        self.update_listbox()
         # LabelFrame erstellen
         self.labelframe = Frame(self)
-        self.labelframe.grid(row=2, column=0, padx=10, pady=10, sticky="ew")
+        self.labelframe.grid(row=1, column=0, padx=10, pady=10, sticky="ew")
 
         self.termf = ttk.Frame(self.labelframe)
 
@@ -62,6 +82,55 @@ class MainApplication(tk.Tk):
         global wid
         wid = self.termf.winfo_id()
 
+
+    def get_apt_updates(self):
+        """Abrufen der APT-Updates."""
+        try:
+            result = subprocess.run(
+                ['apt', 'list', '--upgradable'],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True
+            )
+            updates = result.stdout.splitlines()[1:]  # Überschrift auslassen
+            if updates:  # Wenn Updates vorhanden sind
+                return True,["APT Updates:"] + updates
+            else:  # Keine Updates verfügbar
+                return False, ["Keine APT-Updates verfügbar."]
+        except Exception as e:
+            return [f"Fehler beim Abrufen von APT-Updates: {str(e)}"]
+
+    def get_flatpak_updates(self):
+        """Abrufen der Flatpak-Updates."""
+        try:
+            result = subprocess.run(
+                ['flatpak', 'remote-ls', '--updates'],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True
+            )
+            updates = result.stdout.splitlines()
+            if len(updates) > 1:  # Überschrift + mindestens ein Update
+                return True,["Flatpak Updates:"] + updates
+            else:  # Keine Updates verfügbar
+                return False,[ "Keine Flatpak-Updates verfügbar."]
+        except Exception as e:
+            return [f"Fehler beim Abrufen von Flatpak-Updates: {str(e)}"]
+
+    def update_listbox(self):
+        """Lädt Updates neu und zeigt sie in der Listbox an."""
+        apt_updates = self.get_apt_updates()
+        flatpak_updates = self.get_flatpak_updates()
+        self.listbox.delete(0, tk.END)  # Listbox leeren
+        for update in apt_updates[1] + [""] + flatpak_updates[1]:  # Updates kombinieren
+            self.listbox.insert(tk.END, update)
+
+        # Button deaktivieren, wenn keine Updates verfügbar sind
+        if not apt_updates[0] and not flatpak_updates[0]:
+            self.button.config(state=tk.DISABLED)
+        else:
+            self.button.config(state=tk.NORMAL)
+
     def all_up_action(self):
         """Passes commands for auto-generated buttons"""
         frame_width = self.termf.winfo_width()
@@ -72,7 +141,7 @@ class MainApplication(tk.Tk):
             "\"pkexec env DISPLAY=$DISPLAY XAUTHORITY=$XAUTHORITY bash -c 'apt update -y && apt upgrade -y && apt autoremove -y && flatpak update -y && flatpak uninstall --unused -y' "
             'sleep 5 && exit; exec bash"'
         )
-
+        
 
         result = subprocess.run(
             command,
@@ -83,7 +152,7 @@ class MainApplication(tk.Tk):
         )
 
         # Beispielaufruf mit Icon und hoher Dringlichkeit
-
+        self.update_listbox()
 
 if __name__ == "__main__":
     app = MainApplication()

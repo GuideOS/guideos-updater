@@ -7,12 +7,13 @@ PACKAGE := guideos-updater
 
 override_dh_install:
 	# Erstellen der notwendigen Verzeichnisse
-	mkdir -p debian/$(PACKAGE)/usr/lib/guideos-updater
+	mkdir -p debian/$(PACKAGE)/usr/bin
+	mkdir -p debian/$(PACKAGE)/usr/lib
 	mkdir -p debian/$(PACKAGE)/usr/share/doc/$(PACKAGE)
 
 	# Kopieren der Dateien
 	cp LICENSE debian/$(PACKAGE)/usr/share/doc/$(PACKAGE)/LICENSE
-	cp -r guideos-updater debian/$(PACKAGE)/usr/lib/guideos-updater
+	cp -r guideos-updater debian/$(PACKAGE)/usr/lib/
 	
 	# Erstellen der .desktop-Datei
 	#./create_desktop_files.sh
