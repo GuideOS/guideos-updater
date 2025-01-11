@@ -6,6 +6,8 @@ import tkinter as tk
 import subprocess
 import os
 from tkinter import Scrollbar, Listbox
+import tkinter.messagebox as messagebox
+
 
 class MainApplication(tk.Tk):
     def __init__(self):
@@ -94,7 +96,7 @@ class MainApplication(tk.Tk):
             )
             updates = result.stdout.splitlines()[1:]  # Überschrift auslassen
             if updates:  # Wenn Updates vorhanden sind
-                return True,["APT Updates:"] + updates
+                return True, ["APT Updates:"] + updates
             else:  # Keine Updates verfügbar
                 return False, ["Keine APT-Updates verfügbar."]
         except Exception as e:
@@ -110,10 +112,11 @@ class MainApplication(tk.Tk):
                 text=True
             )
             updates = result.stdout.splitlines()
+            print("Flatpak updates:", updates)  # Debug print
             if len(updates) > 1:  # Überschrift + mindestens ein Update
-                return True,["Flatpak Updates:"] + updates
+                return True, ["Flatpak Updates:"] + updates
             else:  # Keine Updates verfügbar
-                return False,[ "Keine Flatpak-Updates verfügbar."]
+                return False, ["Keine Flatpak-Updates verfügbar."]
         except Exception as e:
             return [f"Fehler beim Abrufen von Flatpak-Updates: {str(e)}"]
 
@@ -121,6 +124,8 @@ class MainApplication(tk.Tk):
         """Lädt Updates neu und zeigt sie in der Listbox an."""
         apt_updates = self.get_apt_updates()
         flatpak_updates = self.get_flatpak_updates()
+        print("APT updates:", apt_updates)  # Debug print
+        print("Flatpak updates:", flatpak_updates)  # Debug print
         self.listbox.delete(0, tk.END)  # Listbox leeren
         for update in apt_updates[1] + [""] + flatpak_updates[1]:  # Updates kombinieren
             self.listbox.insert(tk.END, update)
@@ -138,18 +143,24 @@ class MainApplication(tk.Tk):
 
         command = (
             f"xterm -into {wid} -bg Grey11 -geometry {frame_height}x{frame_width} -e "
-            "\"pkexec env DISPLAY=$DISPLAY XAUTHORITY=$XAUTHORITY bash -c 'apt update -y && apt upgrade -y && apt autoremove -y && flatpak update -y && flatpak uninstall --unused -y' "
+            "\"pkexec env DISPLAY=$DISPLAY XAUTHORITY=$XAUTHORITY bash -c 'apt update -y && apt upgrade -y && apt autoremove -y && flatpak update -y && flatpak uninstall --unused -y && sleep 5' "
             'sleep 5 && exit; exec bash"'
         )
-        
 
-        result = subprocess.run(
-            command,
-            shell=True,
-            check=True,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-        )
+        try:
+            result = subprocess.run(
+                command,
+                shell=True,
+                check=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+            )
+            
+            # Benachrichtigung anzeigen, wenn die Aktualisierungen abgeschlossen sind
+            messagebox.showinfo("Aktualisierung", "Alle Aktualisierungen wurden erfolgreich abgeschlossen.")
+        except subprocess.CalledProcessError as e:
+            # Fehlerbenachrichtigung anzeigen
+            messagebox.showerror("Fehler", f"Ein Fehler ist aufgetreten: {str(e)}")
 
         # Beispielaufruf mit Icon und hoher Dringlichkeit
         self.update_listbox()

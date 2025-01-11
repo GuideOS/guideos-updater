@@ -1,3 +1,10 @@
+guideos-updater (0.1.1) unstable; urgency=medium
+
+  * Added list of available updates
+  * Added Messagebox 
+
+ -- Actionschnitzel <actionschnitzel@guideos.de>  Sun, 05 Jan 2025 15:52:27 +0100
+
 guideos-updater (0.1) unstable; urgency=medium
 
   * Initial release.
