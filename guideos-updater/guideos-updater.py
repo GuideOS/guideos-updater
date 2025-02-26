@@ -7,6 +7,7 @@ import subprocess
 import os
 from tkinter import Scrollbar, Listbox
 import tkinter.messagebox as messagebox
+from azure_ttk import *
 
 
 class MainApplication(tk.Tk):
@@ -17,11 +18,14 @@ class MainApplication(tk.Tk):
         script_dir = os.path.dirname(os.path.abspath(__file__))
         application_path = os.path.dirname(script_dir)
         self.tk.call(
-            "source", f"{application_path}/guideos-updater/azure-adwaita-ttk/azure.tcl"
+            "source", TCL_THEME_FILE_PATH
         )
-        self.tk.call("set_theme", "light")
+        if "dark" in theme_name or "Dark" in theme_name:
+            self.tk.call("set_theme", "dark")
+        else:
+            self.tk.call("set_theme", "light")
         # self["background"] = maincolor
-        app_width = 600
+        app_width = 800
         app_height = 500
         # Define Screen
         screen_width = self.winfo_screenwidth()
@@ -30,7 +34,7 @@ class MainApplication(tk.Tk):
         y = (screen_height / 2) - (app_height / 2)
         # self.icon is still needed for some DEs
         self.icon = tk.PhotoImage(
-            file=f"/usr/share/icons/hicolor/256x256/apps/primo-di-tutto-logo.png"
+            file=f"/usr/share/icons/hicolor/256x256/apps/guideos-updater.png"
         )
         self.tk.call("wm", "iconphoto", self._w, self.icon)
         self.geometry(f"{app_width}x{app_height}+{int(x)}+{int(y)}")
@@ -40,7 +44,7 @@ class MainApplication(tk.Tk):
 
 
         self.term_logo = PhotoImage(
-            file=f"{application_path}/guideos-updater/guide-os-logo-symbolic-light.png"
+            file=f"{application_path}/guideos-updater/guideos-updater.png"
         )
 
         # Text-Widget hinzufügen
@@ -127,8 +131,13 @@ class MainApplication(tk.Tk):
         print("APT updates:", apt_updates)  # Debug print
         print("Flatpak updates:", flatpak_updates)  # Debug print
         self.listbox.delete(0, tk.END)  # Listbox leeren
+
+        # Tabulatoren durch Leerzeichen ersetzen
+        def replace_tabs(text):
+            return text.replace('\t', '    ')  # Ersetzen Sie '\t' durch vier Leerzeichen
+
         for update in apt_updates[1] + [""] + flatpak_updates[1]:  # Updates kombinieren
-            self.listbox.insert(tk.END, update)
+            self.listbox.insert(tk.END, replace_tabs(update))
 
         # Button deaktivieren, wenn keine Updates verfügbar sind
         if not apt_updates[0] and not flatpak_updates[0]:

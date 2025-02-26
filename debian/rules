@@ -10,9 +10,11 @@ override_dh_install:
 	mkdir -p debian/$(PACKAGE)/usr/bin
 	mkdir -p debian/$(PACKAGE)/usr/lib
 	mkdir -p debian/$(PACKAGE)/usr/share/doc/$(PACKAGE)
+	mkdir -p debian/$(PACKAGE)/usr/share/icons/hicolor/256x256/apps/
 
 	# Kopieren der Dateien
 	cp LICENSE debian/$(PACKAGE)/usr/share/doc/$(PACKAGE)/LICENSE
+	cp guideos-updater.png debian/$(PACKAGE)/usr/share/icons/hicolor/256x256/apps/
 	cp -r guideos-updater debian/$(PACKAGE)/usr/lib/
 	
 	# Erstellen der .desktop-Datei

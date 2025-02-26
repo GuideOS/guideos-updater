@@ -1,3 +1,15 @@
+guideos-updater (2.1) unstable; urgency=medium
+
+  * Fixed: t\ displays symbol in listbox
+
+ -- Actionschnitzel <actionschnitzel@guideos.de>  Tue, 25 Feb 2025 16:22:15 +0100
+
+guideos-updater (0.2.0-1) unstable; urgency=medium
+
+  * Implementation of azure-ttk lib
+
+ -- Actionschnitzel <actionschnitzel@guideos.de>  Sun, 19 Jan 2025 17:16:53 +0100
+
 guideos-updater (0.1.1) unstable; urgency=medium
 
   * Added list of available updates

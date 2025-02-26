@@ -3,11 +3,11 @@ Section: misc
 Priority: optional
 Maintainer: Actionschnitzel <actionschnitzel@guideos.de>
 Build-Depends: debhelper (>= 9), python3-all, python3-setuptools,
-Standards-Version: 0.1.
+Standards-Version: 0.1.0
 Homepage: https://rueegger.me
 
 Package: guideos-updater
 Architecture: all
-Depends: ${misc:Depends}, python3, python3-tk, bash, xterm
+Depends: ${misc:Depends}, python3, python3-tk, bash, xterm, guideos-azure-ttk
 Description: Update Tool
  This tool is a Update GUI für APT and Flatpak
