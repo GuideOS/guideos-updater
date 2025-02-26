@@ -1,3 +1,9 @@
+guideos-updater (2.2.0) unstable; urgency=medium
+
+  * Changed: Icons
+
+ -- Actionschnitzel <actionschnitzel@guideos.de>  Wed, 26 Feb 2025 19:17:43 +0100
+
 guideos-updater (2.1) unstable; urgency=medium
 
   * Fixed: t\ displays symbol in listbox
