@@ -1,13 +1,45 @@
 Source: guideos-updater
-Section: misc
+Section: admin
 Priority: optional
 Maintainer: Actionschnitzel <actionschnitzel@guideos.de>
-Build-Depends: debhelper (>= 9), python3-all, python3-setuptools,
-Standards-Version: 0.1.0
-Homepage: https://rueegger.me
+Build-Depends: debhelper-compat (= 13),
+               dh-python,
+               python3-all,
+               python3-setuptools,
+               gettext
+Standards-Version: 4.6.1
+Homepage: https://github.com/guideos/guideos-updater
+Vcs-Git: https://github.com/guideos/guideos-updater.git
+Vcs-Browser: https://github.com/guideos/guideos-updater
 
 Package: guideos-updater
 Architecture: all
-Depends: ${misc:Depends}, python3, python3-tk, bash, xterm, guideos-azure-ttk
-Description: Update Tool
- This tool is a Update GUI für APT and Flatpak
+Depends: ${misc:Depends},
+         ${python3:Depends},
+         python3-gi,
+         python3-gi-cairo,
+         gir1.2-gtk-3.0,
+         gir1.2-notify-0.7,
+         python3-apt,
+         polkitd,
+         pkexec
+Recommends: flatpak
+Suggests: gnome-software-plugin-flatpak
+Description: GuideOS Update Manager for APT and Flatpak packages
+ GuideOS Updater is a graphical update manager similar to 
+ Linux Mint's mintupdate. It provides a user-friendly interface for
+ managing system updates from APT repositories and Flatpak applications.
+ .
+ Features include:
+  * German and English internationalization
+  * PolicyKit integration for secure authentication
+  * Desktop notifications and progress tracking
+  * Support for both APT and Flatpak package sources
+  * Modular architecture for easy extension
+ .
+ Features:
+ - APT package management with security update detection
+ - Flatpak application management
+ - GTK3-based user interface with update selection
+ - Progress tracking and desktop notifications
+ - PolicyKit integration for secure privilege escalation

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE policyconfig PUBLIC
+ "-//freedesktop//DTD PolicyKit Policy Configuration 1.0//EN"
+ "http://www.freedesktop.org/standards/PolicyKit/1/policyconfig.dtd">
+<policyconfig>
+  
+  <vendor>GuideOS</vendor>
+  <vendor_url>https://github.com/guideos/guideos-updater</vendor_url>
+  <icon_name>system-software-update</icon_name>
+
+  <action id="org.guideos.guideos-updater.update-cache">
+    <description>Update package cache</description>
+    <description xml:lang="de">Paketcache aktualisieren</description>
+    <message>Authentication required to update the package cache</message>
+    <message xml:lang="de">Authentifizierung erforderlich um den Paketcache zu aktualisieren</message>
+    <icon_name>system-software-update</icon_name>
+    <defaults>
+      <allow_any>no</allow_any>
+      <allow_inactive>no</allow_inactive>
+      <allow_active>yes</allow_active>
+    </defaults>
+    <annotate key="org.freedesktop.policykit.exec.path">/usr/bin/apt</annotate>
+    <annotate key="org.freedesktop.policykit.exec.allow_gui">true</annotate>
+  </action>
+
+  <action id="org.guideos.guideos-updater.install-packages">
+    <description>Install or upgrade packages</description>
+    <description xml:lang="de">Pakete installieren oder aktualisieren</description>
+    <message>Authentication required to install or upgrade packages</message>
+    <message xml:lang="de">Authentifizierung erforderlich um Pakete zu installieren oder zu aktualisieren</message>
+    <icon_name>system-software-update</icon_name>
+    <defaults>
+      <allow_any>no</allow_any>
+      <allow_inactive>no</allow_inactive>
+      <allow_active>auth_admin_keep</allow_active>
+    </defaults>
+    <annotate key="org.freedesktop.policykit.exec.path">/usr/bin/apt</annotate>
+    <annotate key="org.freedesktop.policykit.exec.allow_gui">true</annotate>
+  </action>
+
+  <action id="org.guideos.guideos-updater.flatpak-update">
+    <description>Update Flatpak applications</description>
+    <description xml:lang="de">Flatpak-Anwendungen aktualisieren</description>
+    <message>Authentication required to update Flatpak applications</message>
+    <message xml:lang="de">Authentifizierung erforderlich um Flatpak-Anwendungen zu aktualisieren</message>
+    <icon_name>system-software-update</icon_name>
+    <defaults>
+      <allow_any>no</allow_any>
+      <allow_inactive>no</allow_inactive>
+      <allow_active>yes</allow_active>
+    </defaults>
+    <annotate key="org.freedesktop.policykit.exec.path">/usr/bin/flatpak</annotate>
+    <annotate key="org.freedesktop.policykit.exec.allow_gui">true</annotate>
+  </action>
+
+</policyconfig>

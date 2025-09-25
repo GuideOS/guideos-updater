@@ -1,0 +1,15 @@
+[Desktop Entry]
+Name=GuideOS Updater
+Name[de]=GuideOS Updater
+Comment=Update Manager for APT and Flatpak packages
+Comment[de]=Update-Manager für APT- und Flatpak-Pakete
+GenericName=Update Manager
+GenericName[de]=Update-Manager
+Exec=guideos-updater
+Icon=guidos-updater
+Terminal=false
+Type=Application
+Categories=System;Settings;GuideOS;
+StartupNotify=true
+Keywords=update;package;apt;flatpak;system;
+Keywords[de]=update;paket;apt;flatpak;system;aktualisierung;

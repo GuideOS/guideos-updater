@@ -1,0 +1,11 @@
+include setup.py
+include README.md
+include requirements-system.txt
+include guideos-updater
+recursive-include core *.py
+recursive-include gui *.py
+recursive-include utils *.py
+recursive-include locale *.po
+recursive-include locale *.mo
+include debian/guideos-updater.desktop
+include debian/org.guideos.guideos-updater.policy

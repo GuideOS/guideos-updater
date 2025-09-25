@@ -1,31 +1,48 @@
 #!/usr/bin/make -f
 
-PACKAGE := guideos-updater
-
 %:
-	dh $@
+	dh $@ --with python3 --buildsystem=pybuild
 
-override_dh_install:
-	# Erstellen der notwendigen Verzeichnisse
-	mkdir -p debian/$(PACKAGE)/usr/bin
-	mkdir -p debian/$(PACKAGE)/usr/lib
-	mkdir -p debian/$(PACKAGE)/usr/share/doc/$(PACKAGE)
-	mkdir -p debian/$(PACKAGE)/usr/share/icons/hicolor/256x256/apps/
+override_dh_auto_build:
+	# Build translations before building package
+	./build-translations.sh
+	dh_auto_build
 
-	# Kopieren der Dateien
-	cp LICENSE debian/$(PACKAGE)/usr/share/doc/$(PACKAGE)/LICENSE
-	cp guideos-updater.png debian/$(PACKAGE)/usr/share/icons/hicolor/256x256/apps/
-	cp -r guideos-updater debian/$(PACKAGE)/usr/lib/
+override_dh_auto_install:
+	dh_auto_install
+	# Install PolicyKit policy file
+	install -D -m 644 debian/org.guideos.guideos-updater.policy \
+		$(CURDIR)/debian/guideos-updater/usr/share/polkit-1/actions/org.guideos.guideos-updater.policy
 	
-	# Erstellen der .desktop-Datei
-	#./create_desktop_files.sh
+	# Install desktop file
+	install -D -m 644 debian/guideos-updater.desktop \
+		$(CURDIR)/debian/guideos-updater/usr/share/applications/guideos-updater.desktop
+	
+	# Install main executable
+	install -D -m 755 guideos-updater \
+		$(CURDIR)/debian/guideos-updater/usr/bin/guideos-updater
+	
+	# Install Python modules
+	mkdir -p $(CURDIR)/debian/guideos-updater/usr/lib/guideos-updater
+	cp -r core gui utils *.py \
+		$(CURDIR)/debian/guideos-updater/usr/lib/guideos-updater/
+	
+	# Install locale files
+	if [ -d locale ]; then \
+		for mo_file in locale/*/LC_MESSAGES/*.mo; do \
+			if [ -f "$$mo_file" ]; then \
+				lang=$$(echo "$$mo_file" | cut -d'/' -f2); \
+				install -D -m 644 "$$mo_file" \
+					"$(CURDIR)/debian/guideos-updater/usr/share/locale/$$lang/LC_MESSAGES/guideos-updater.mo"; \
+			fi; \
+		done; \
+	fi
 
-	# Setzen der Berechtigungen
-	chmod +x debian/$(PACKAGE)/usr/lib/guideos-updater/guideos-updater.py
+override_dh_python3:
+	dh_python3 --skip-private
 
-	# Erstellen der /bin/primo-di-tutto Datei
-	echo "#!/bin/bash" > debian/$(PACKAGE)/usr/bin/guideos-updater
-	echo '/usr/lib/guideos-updater/guideos-updater.py "$@"' >> debian/$(PACKAGE)/usr/bin/guideos-updater
-	chmod +x debian/$(PACKAGE)/usr/bin/guideos-updater
-
-	dh_install
+override_dh_clean:
+	dh_clean
+	# Remove any leftover build artifacts
+	rm -rf debian/gup-update-manager
+	rm -f debian/gup-update-manager.*

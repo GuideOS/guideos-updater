@@ -1,0 +1,165 @@
+# German translations for GuideOS Updater
+# Copyright (C) 2025 GuideOS
+# This file is distributed under the same license as the guideos-updater package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: guideos-updater 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-09-24 12:00+0200\n"
+"PO-Revision-Date: 2025-09-24 12:00+0200\n"
+"Last-Translator: \n"
+"Language-Team: German\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+# Main window titles
+msgid "GuideOS Updater"
+msgstr "GuideOS Updater"
+
+msgid "GuideOS Update Manager"
+msgstr "GuideOS Update-Manager"
+
+# Tooltips
+msgid "Refresh update list"
+msgstr "Update-Liste aktualisieren"
+
+# Status messages
+msgid "Ready"
+msgstr "Bereit"
+
+msgid "Refreshing updates..."
+msgstr "Updates werden aktualisiert..."
+
+msgid "Searching for updates..."
+msgstr "Suche nach Aktualisierungen..."
+
+msgid "Installing updates..."
+msgstr "Updates werden installiert..."
+
+msgid "Installing: {}"
+msgstr "Installiere: {}"
+
+msgid "Updates installed successfully - Refreshing list..."
+msgstr "Updates erfolgreich installiert - Liste wird aktualisiert..."
+
+msgid "Update installation failed"
+msgstr "Update-Installation fehlgeschlagen"
+
+msgid "No update manager available"
+msgstr "Kein Update-Manager verfügbar"
+
+# Column headers
+msgid "Select"
+msgstr "Auswählen"
+
+msgid "Package"
+msgstr "Paket"
+
+msgid "Current Version"
+msgstr "Aktuelle Version"
+
+msgid "New Version"
+msgstr "Neue Version"
+
+msgid "Source"
+msgstr "Quelle"
+
+msgid "Type"
+msgstr "Typ"
+
+msgid "Size"
+msgstr "Größe"
+
+# Button labels
+msgid "Select All"
+msgstr "Alle auswählen"
+
+msgid "Select None"
+msgstr "Keine auswählen"
+
+msgid "Install Updates"
+msgstr "Updates installieren"
+
+msgid "Install {} Updates"
+msgstr "{} Updates installieren"
+
+# Update count labels
+msgid "Total: {} | APT: {} | Flatpak: {} | Security: {}"
+msgstr "Gesamt: {} | APT: {} | Flatpak: {} | Sicherheit: {}"
+
+# Dialog messages
+msgid "Install {} updates?"
+msgstr "{} Updates installieren?"
+
+msgid "This will install the selected updates. Continue?"
+msgstr "Dies wird die ausgewählten Updates installieren. Fortfahren?"
+
+# Authentication dialog
+msgid "Authentication Required"
+msgstr "Authentifizierung erforderlich"
+
+msgid "Administrator privileges required"
+msgstr "Administratorrechte erforderlich"
+
+msgid "Please enter your password to continue."
+msgstr "Bitte geben Sie Ihr Passwort ein, um fortzufahren."
+
+msgid "Password:"
+msgstr "Passwort:"
+
+msgid "Cancel"
+msgstr "Abbrechen"
+
+msgid "Authenticate"
+msgstr "Authentifizieren"
+
+msgid "⚠ Caps Lock is on"
+msgstr "⚠ Feststelltaste ist aktiviert"
+
+# Notifications
+msgid "Updates Complete"
+msgstr "Updates abgeschlossen"
+
+msgid "All selected updates have been installed successfully."
+msgstr "Alle ausgewählten Updates wurden erfolgreich installiert."
+
+msgid "Update Failed"
+msgstr "Update fehlgeschlagen"
+
+msgid "Some updates could not be installed. Check the logs for details."
+msgstr "Einige Updates konnten nicht installiert werden. Prüfen Sie die Protokolle für Details."
+
+# Package types
+msgid "Security"
+msgstr "Sicherheit"
+
+msgid "Standard"
+msgstr "Standard"
+
+msgid "Unknown"
+msgstr "Unbekannt"
+
+# Update sources
+msgid "APT"
+msgstr "APT"
+
+msgid "FLATPAK"
+msgstr "FLATPAK"
+
+# Success dialog
+msgid "Updates Completed Successfully!"
+msgstr "Updates erfolgreich abgeschlossen!"
+
+msgid "{} updates have been installed successfully.\n\nYour system is now up to date. Some updates may require a system restart to take full effect."
+msgstr "{} Updates wurden erfolgreich installiert.\n\nIhr System ist jetzt auf dem neuesten Stand. Einige Updates erfordern möglicherweise einen Systemneustart, um vollständig wirksam zu werden."
+
+# Error dialog
+msgid "Update Installation Failed!"
+msgstr "Update-Installation fehlgeschlagen!"
+
+msgid "Some updates could not be installed successfully.\n\nThis might be due to:\n• Network connection issues\n• Package conflicts\n• Insufficient disk space\n• Permission problems\n\nPlease check the system logs for more details and try again."
+msgstr "Einige Updates konnten nicht erfolgreich installiert werden.\n\nDies könnte folgende Ursachen haben:\n• Netzwerkverbindungsprobleme\n• Paketkonflikte\n• Unzureichender Festplattenspeicher\n• Berechtigungsprobleme\n\nBitte überprüfen Sie die Systemprotokolle für weitere Details und versuchen Sie es erneut."

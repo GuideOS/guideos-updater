@@ -1,0 +1,48 @@
+#!/bin/sh
+# postinst script for guideos-updater
+
+set -e
+
+case "$1" in
+    configure)
+        # Update desktop database
+        if command -v update-desktop-database >/dev/null 2>&1; then
+            update-desktop-database -q
+        fi
+        
+        # Update locale cache if available
+        if command -v locale-gen >/dev/null 2>&1; then
+            # Only regenerate if locale is actually installed
+            if [ -f /usr/share/locale/de/LC_MESSAGES/guideos-updater.mo ]; then
+                echo "GuideOS Updater: German locale installed"
+            fi
+        fi
+        
+        # Refresh GTK icon cache
+        if command -v gtk-update-icon-cache >/dev/null 2>&1; then
+            gtk-update-icon-cache -q /usr/share/icons/hicolor >/dev/null 2>&1 || true
+        fi
+    ;;
+
+    abort-upgrade|abort-remove|abort-deconfigure)
+    ;;
+
+    *)
+        echo "postinst called with unknown argument \`$1'" >&2
+        exit 1
+    ;;
+esac
+
+
+# Automatically added by dh_python3
+if command -v py3compile >/dev/null 2>&1; then
+	py3compile -p guideos-updater 
+fi
+if command -v pypy3compile >/dev/null 2>&1; then
+	pypy3compile -p guideos-updater  || true
+fi
+
+# End automatically added section
+
+
+exit 0
