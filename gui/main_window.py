@@ -99,6 +99,11 @@ class MainWindow:
         status_box.set_margin_top(5)
         status_box.set_margin_bottom(5)
         
+        # Create spinner for loading animation (initially hidden)
+        self.status_spinner = Gtk.Spinner()
+        self.status_spinner.set_size_request(24, 24)
+        self.status_spinner.set_no_show_all(True)
+        
         self.status_label = Gtk.Label()
         self.status_label.set_markup(f"<b>{_('Ready')}</b>")
         self.status_label.set_halign(Gtk.Align.START)
@@ -106,7 +111,8 @@ class MainWindow:
         self.update_count_label = Gtk.Label()
         self.update_count_label.set_halign(Gtk.Align.END)
         
-        status_box.pack_start(self.status_label, True, True, 0)
+        status_box.pack_start(self.status_spinner, False, False, 0)
+        status_box.pack_start(self.status_label, False, False, 8)
         status_box.pack_end(self.update_count_label, False, False, 0)
         
         self.status_frame.add(status_box)
@@ -227,6 +233,8 @@ class MainWindow:
         self.window.show_all()
         # Start initial refresh (only if update_manager is available)
         if self.update_manager:
+            self.status_spinner.show()
+            self.status_spinner.start()
             self.status_label.set_markup(f"<b>{_('Searching for updates...')}</b>")
             self.refresh_button.set_sensitive(False)
             self.update_manager.refresh_updates()
@@ -237,6 +245,8 @@ class MainWindow:
         if not self.update_manager:
             return
         self.refresh_button.set_sensitive(False)
+        self.status_spinner.show()
+        self.status_spinner.start()
         self.status_label.set_markup(f"<b>{_('Searching for updates...')}</b>")
         self.update_manager.refresh_updates()
     
@@ -337,6 +347,8 @@ class MainWindow:
     
     def _on_refresh_complete(self):
         """Handle refresh complete event"""
+        self.status_spinner.stop()
+        self.status_spinner.hide()
         self.refresh_button.set_sensitive(True)
         self.status_label.set_markup(f"<b>{_('Ready')}</b>")
     

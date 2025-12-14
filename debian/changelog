@@ -1,3 +1,9 @@
+guideos-updater (3.1.6) unstable; urgency=medium
+
+  * Added animated loading spinner during update search
+
+ -- Actionschnitzel <actionschnitzel@guideos.de>  Sat, 14 Dec 2025 12:00:00 +0000
+
 guideos-updater (3.1.5) unstable; urgency=medium
 
   * Improved status display during update search
