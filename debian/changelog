@@ -1,3 +1,30 @@
+guideos-updater (4.1.0) unstable; urgency=medium
+
+  * Migrated from GTK 4 to Libadwaita for modern GNOME design
+  * Replaced Gtk.Application with Adw.Application
+  * Replaced Gtk.Window with Adw.ApplicationWindow
+  * Implemented Adw.ToolbarView for better header bar integration
+  * Migrated to libAdapta for cross-desktop theme support
+  * Updated all dependencies to include libadapta-1 (gir1.2-adap-1)
+  * All Adw.* classes now provided by libAdapta with theme compatibility
+  * Added "No updates available" dialog with app close option
+  * Improved German translations for new dialogs
+  * Enhanced TreeView with proper expansion settings
+
+ -- Actionschnitzel <actionschnitzel@guideos.de>  Wed, 08 Jan 2026 14:00:00 +0000
+
+guideos-updater (4.0.0) unstable; urgency=medium
+
+  * Major update: Migrated from GTK 3 to GTK 4
+  * Updated all GUI components to use GTK 4 API
+  * Replaced deprecated widgets with modern alternatives
+  * Improved dialog system with AlertDialog
+  * Enhanced authentication dialog with PasswordEntry widget
+  * Updated all packaging dependencies for GTK 4
+  * Modernized UI rendering and event handling
+
+ -- Actionschnitzel <actionschnitzel@guideos.de>  Wed, 08 Jan 2026 12:00:00 +0000
+
 guideos-updater (3.1.6) unstable; urgency=medium
 
   * Added animated loading spinner during update search

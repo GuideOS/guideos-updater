@@ -3,8 +3,9 @@ Main GUI Window for GuideOS Updater
 """
 
 import gi
-gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, GLib, Gdk, Notify
+gi.require_version('Gtk', '4.0')
+gi.require_version('Adap', '1')
+from gi.repository import Gtk, Adap as Adw, GLib, Gdk, Notify
 
 from utils.logger import Logger
 from utils.i18n import _
@@ -18,10 +19,9 @@ class MainWindow:
         self.selected_updates = []
         
         # Create main window
-        self.window = Gtk.Window()
+        self.window = Adw.ApplicationWindow()
         self.window.set_title(_("GuideOS Updater"))
         self.window.set_default_size(800, 600)
-        self.window.set_position(Gtk.WindowPosition.CENTER)
         
         # Set window icon
         try:
@@ -51,12 +51,15 @@ class MainWindow:
     
     def _create_ui(self):
         """Create the user interface"""
-        # Main container
-        vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
-        self.window.add(vbox)
+        # Create toolbar view for better libadwaita integration
+        toolbar_view = Adw.ToolbarView()
         
         # Header bar
-        self._create_header_bar(vbox)
+        header_bar = self._create_header_bar()
+        toolbar_view.add_top_bar(header_bar)
+        
+        # Main container
+        vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         
         # Status bar
         self._create_status_bar(vbox)
@@ -66,43 +69,45 @@ class MainWindow:
         
         # Progress bar (initially hidden)
         self.progress_bar = Gtk.ProgressBar()
-        self.progress_bar.set_no_show_all(True)
-        vbox.pack_start(self.progress_bar, False, False, 0)
+        self.progress_bar.set_visible(False)
+        vbox.append(self.progress_bar)
         
         # Button area
         self._create_button_area(vbox)
+        
+        toolbar_view.set_content(vbox)
+        self.window.set_content(toolbar_view)
     
-    def _create_header_bar(self, parent):
+    def _create_header_bar(self):
         """Create header bar with title and refresh button"""
-        header_bar = Gtk.HeaderBar()
-        header_bar.set_show_close_button(True)
-        header_bar.set_title(_("GuideOS Update Manager"))
-        #header_bar.set_subtitle("System Update Manager")
+        header_bar = Adw.HeaderBar()
         
         # Refresh button
         self.refresh_button = Gtk.Button()
-        refresh_icon = Gtk.Image.new_from_icon_name("view-refresh-symbolic", Gtk.IconSize.BUTTON)
-        self.refresh_button.set_image(refresh_icon)
+        refresh_icon = Gtk.Image.new_from_icon_name("view-refresh-symbolic")
+        self.refresh_button.set_child(refresh_icon)
         self.refresh_button.set_tooltip_text(_("Refresh update list"))
         header_bar.pack_start(self.refresh_button)
         
-        self.window.set_titlebar(header_bar)
+        return header_bar
     
     def _create_status_bar(self, parent):
         """Create status information bar"""
         self.status_frame = Gtk.Frame()
-        self.status_frame.set_shadow_type(Gtk.ShadowType.ETCHED_IN)
+        self.status_frame.set_margin_start(10)
+        self.status_frame.set_margin_end(10)
+        self.status_frame.set_margin_top(10)
         
         status_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
-        status_box.set_margin_left(10)
-        status_box.set_margin_right(10)
+        status_box.set_margin_start(10)
+        status_box.set_margin_end(10)
         status_box.set_margin_top(5)
         status_box.set_margin_bottom(5)
         
         # Create spinner for loading animation (initially hidden)
         self.status_spinner = Gtk.Spinner()
         self.status_spinner.set_size_request(24, 24)
-        self.status_spinner.set_no_show_all(True)
+        self.status_spinner.set_visible(False)
         
         self.status_label = Gtk.Label()
         self.status_label.set_markup(f"<b>{_('Ready')}</b>")
@@ -111,20 +116,26 @@ class MainWindow:
         self.update_count_label = Gtk.Label()
         self.update_count_label.set_halign(Gtk.Align.END)
         
-        status_box.pack_start(self.status_spinner, False, False, 0)
-        status_box.pack_start(self.status_label, False, False, 8)
-        status_box.pack_end(self.update_count_label, False, False, 0)
+        status_box.append(self.status_spinner)
+        status_box.append(self.status_label)
+        # Spacer box for expanding
+        spacer = Gtk.Box()
+        spacer.set_hexpand(True)
+        status_box.append(spacer)
+        status_box.append(self.update_count_label)
         
-        self.status_frame.add(status_box)
-        parent.pack_start(self.status_frame, False, False, 0)
+        self.status_frame.set_child(status_box)
+        parent.append(self.status_frame)
     
     def _create_content_area(self, parent):
         """Create main content area with update list"""
         # Scrolled window for the tree view
         scrolled = Gtk.ScrolledWindow()
         scrolled.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
-        scrolled.set_margin_left(10)
-        scrolled.set_margin_right(10)
+        scrolled.set_vexpand(True)
+        scrolled.set_hexpand(True)
+        scrolled.set_margin_start(10)
+        scrolled.set_margin_end(10)
         scrolled.set_margin_top(10)
         scrolled.set_margin_bottom(10)
         
@@ -132,7 +143,6 @@ class MainWindow:
         self.tree_view = Gtk.TreeView()
         self.tree_view.set_headers_visible(True)
         self.tree_view.set_headers_clickable(True)
-        self.tree_view.set_rules_hint(True)
         
         # Create list store (columns: selected, name, current_version, new_version, source, type, size)
         self.list_store = Gtk.ListStore(bool, str, str, str, str, str, str, object)
@@ -141,8 +151,8 @@ class MainWindow:
         # Create columns
         self._create_columns()
         
-        scrolled.add(self.tree_view)
-        parent.pack_start(scrolled, True, True, 0)
+        scrolled.set_child(self.tree_view)
+        parent.append(scrolled)
     
     def _create_columns(self):
         """Create columns for the tree view"""
@@ -192,33 +202,34 @@ class MainWindow:
     def _create_button_area(self, parent):
         """Create button area at bottom"""
         button_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
-        button_box.set_margin_left(10)
-        button_box.set_margin_right(10)
+        button_box.set_margin_start(10)
+        button_box.set_margin_end(10)
         button_box.set_margin_top(10)
         button_box.set_margin_bottom(10)
         
         # Select All button
         self.select_all_button = Gtk.Button.new_with_label(_("Select All"))
-        button_box.pack_start(self.select_all_button, False, False, 0)
+        button_box.append(self.select_all_button)
         
         # Select None button
         self.select_none_button = Gtk.Button.new_with_label(_("Select None"))
-        button_box.pack_start(self.select_none_button, False, False, 0)
+        button_box.append(self.select_none_button)
         
         # Spacer
-        button_box.pack_start(Gtk.Box(), True, True, 0)
+        spacer = Gtk.Box()
+        spacer.set_hexpand(True)
+        button_box.append(spacer)
         
         # Install Updates button
         self.install_button = Gtk.Button.new_with_label(_("Install Updates"))
-        self.install_button.get_style_context().add_class("suggested-action")
+        self.install_button.add_css_class("suggested-action")
         self.install_button.set_sensitive(False)
-        button_box.pack_end(self.install_button, False, False, 0)
+        button_box.append(self.install_button)
         
-        parent.pack_start(button_box, False, False, 0)
+        parent.append(button_box)
     
     def _setup_callbacks(self):
         """Setup callback connections"""
-        self.window.connect("destroy", Gtk.main_quit)
         self.refresh_button.connect("clicked", self._on_refresh_clicked)
         self.select_all_button.connect("clicked", self._on_select_all_clicked)
         self.select_none_button.connect("clicked", self._on_select_none_clicked)
@@ -230,10 +241,10 @@ class MainWindow:
     
     def show(self):
         """Show the main window"""
-        self.window.show_all()
+        self.window.present()
         # Start initial refresh (only if update_manager is available)
         if self.update_manager:
-            self.status_spinner.show()
+            self.status_spinner.set_visible(True)
             self.status_spinner.start()
             self.status_label.set_markup(f"<b>{_('Searching for updates...')}</b>")
             self.refresh_button.set_sensitive(False)
@@ -245,7 +256,7 @@ class MainWindow:
         if not self.update_manager:
             return
         self.refresh_button.set_sensitive(False)
-        self.status_spinner.show()
+        self.status_spinner.set_visible(True)
         self.status_spinner.start()
         self.status_label.set_markup(f"<b>{_('Searching for updates...')}</b>")
         self.update_manager.refresh_updates()
@@ -268,19 +279,21 @@ class MainWindow:
             return
         
         # Show confirmation dialog
-        dialog = Gtk.MessageDialog(
-            transient_for=self.window,
-            flags=0,
-            message_type=Gtk.MessageType.QUESTION,
-            buttons=Gtk.ButtonsType.YES_NO,
-            text=_("Install {} updates?").format(len(self.selected_updates))
-        )
-        dialog.format_secondary_text(_("This will install the selected updates. Continue?"))
+        dialog = Adw.MessageDialog.new(self.window)
+        dialog.set_heading(_("Install {} updates?").format(len(self.selected_updates)))
+        dialog.set_body(_("This will install the selected updates. Continue?"))
+        dialog.add_response("cancel", _("Cancel"))
+        dialog.add_response("install", _("Install"))
+        dialog.set_response_appearance("install", Adw.ResponseAppearance.SUGGESTED)
+        dialog.set_default_response("install")
+        dialog.set_close_response("cancel")
         
-        response = dialog.run()
-        dialog.destroy()
-        
-        if response == Gtk.ResponseType.YES:
+        dialog.connect("response", self._on_install_dialog_response)
+        dialog.present()
+    
+    def _on_install_dialog_response(self, dialog, response):
+        """Handle install confirmation dialog response"""
+        if response == "install":
             self._start_installation()
     
     def _on_update_toggled(self, renderer, path):
@@ -292,9 +305,13 @@ class MainWindow:
         """Start the installation process"""
         if not self.update_manager:
             return
+        # Disable all interactive elements during update
         self.install_button.set_sensitive(False)
         self.refresh_button.set_sensitive(False)
-        self.progress_bar.show()
+        self.select_all_button.set_sensitive(False)
+        self.select_none_button.set_sensitive(False)
+        self.tree_view.set_sensitive(False)
+        self.progress_bar.set_visible(True)
         self.status_label.set_markup(f"<b>{_('Installing updates...')}</b>")
         
         self.update_manager.install_updates(self.selected_updates)
@@ -318,6 +335,11 @@ class MainWindow:
     def _on_updates_found(self, updates):
         """Handle updates found event"""
         self.list_store.clear()
+        
+        # Check if no updates are available
+        if not updates or len(updates) == 0:
+            self._show_no_updates_dialog()
+            return
         
         for update in updates:
             self.list_store.append([
@@ -345,11 +367,34 @@ class MainWindow:
         else:
             self.update_count_label.set_text(_("No update manager available"))
     
+    def _show_no_updates_dialog(self):
+        """Show dialog when no updates are available"""
+        dialog = Adw.MessageDialog.new(self.window)
+        dialog.set_heading(_("System is up to date"))
+        dialog.set_body(_("There are no updates available for your system.\n\nYour system is already running the latest versions of all packages."))
+        dialog.add_response("close", _("Close Application"))
+        dialog.set_response_appearance("close", Adw.ResponseAppearance.SUGGESTED)
+        dialog.set_default_response("close")
+        
+        dialog.connect("response", self._on_no_updates_dialog_response)
+        dialog.present()
+    
+    def _on_no_updates_dialog_response(self, dialog, response):
+        """Handle no updates dialog response"""
+        # Close the application
+        if self.window.get_application():
+            self.window.get_application().quit()
+        else:
+            self.window.close()
+    
     def _on_refresh_complete(self):
         """Handle refresh complete event"""
         self.status_spinner.stop()
-        self.status_spinner.hide()
+        self.status_spinner.set_visible(False)
         self.refresh_button.set_sensitive(True)
+        self.select_all_button.set_sensitive(True)
+        self.select_none_button.set_sensitive(True)
+        self.tree_view.set_sensitive(True)
         self.status_label.set_markup(f"<b>{_('Ready')}</b>")
     
     def _on_update_progress(self, progress, package_name):
@@ -359,9 +404,13 @@ class MainWindow:
     
     def _on_update_complete(self, success):
         """Handle update complete event"""
-        self.progress_bar.hide()
+        self.progress_bar.set_visible(False)
+        # Re-enable all interactive elements
         self.install_button.set_sensitive(True)
         self.refresh_button.set_sensitive(True)
+        self.select_all_button.set_sensitive(True)
+        self.select_none_button.set_sensitive(True)
+        self.tree_view.set_sensitive(True)
         
         if success:
             self.status_label.set_markup(f"<b>{_('Updates installed successfully - Refreshing list...')}</b>")
@@ -405,43 +454,27 @@ class MainWindow:
     
     def _show_success_dialog(self):
         """Show success popup dialog after successful update"""
-        dialog = Gtk.MessageDialog(
-            transient_for=self.window,
-            flags=0,
-            message_type=Gtk.MessageType.INFO,
-            buttons=Gtk.ButtonsType.OK,
-            text=_("Updates Completed Successfully!")
-        )
-        
         # Get update count for the message
         update_count = len(self.selected_updates)
         
-        dialog.format_secondary_text(
+        dialog = Adw.MessageDialog.new(self.window)
+        dialog.set_heading(_("Updates Completed Successfully!"))
+        dialog.set_body(
             _("{} updates have been installed successfully.\n\n"
               "Your system is now up to date. Some updates may require "
               "a system restart to take full effect.").format(update_count)
         )
+        dialog.add_response("ok", _("OK"))
+        dialog.set_response_appearance("ok", Adw.ResponseAppearance.SUGGESTED)
+        dialog.set_default_response("ok")
         
-        # Set dialog icon
-        try:
-            dialog.set_icon_name("guidos-updater")
-        except:
-            pass
-        
-        dialog.run()
-        dialog.destroy()
+        dialog.present()
     
     def _show_error_dialog(self):
         """Show error popup dialog after failed update"""
-        dialog = Gtk.MessageDialog(
-            transient_for=self.window,
-            flags=0,
-            message_type=Gtk.MessageType.ERROR,
-            buttons=Gtk.ButtonsType.OK,
-            text=_("Update Installation Failed!")
-        )
-        
-        dialog.format_secondary_text(
+        dialog = Adw.MessageDialog.new(self.window)
+        dialog.set_heading(_("Update Installation Failed!"))
+        dialog.set_body(
             _("Some updates could not be installed successfully.\n\n"
               "This might be due to:\n"
               "• Network connection issues\n"
@@ -450,12 +483,8 @@ class MainWindow:
               "• Permission problems\n\n"
               "Please check the system logs for more details and try again.")
         )
+        dialog.add_response("ok", _("OK"))
+        dialog.set_response_appearance("ok", Adw.ResponseAppearance.DESTRUCTIVE)
+        dialog.set_default_response("ok")
         
-        # Set dialog icon
-        try:
-            dialog.set_icon_name("dialog-error")
-        except:
-            pass
-        
-        dialog.run()
-        dialog.destroy()
+        dialog.present()

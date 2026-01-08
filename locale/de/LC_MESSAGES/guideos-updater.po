@@ -163,3 +163,13 @@ msgstr "Update-Installation fehlgeschlagen!"
 
 msgid "Some updates could not be installed successfully.\n\nThis might be due to:\n• Network connection issues\n• Package conflicts\n• Insufficient disk space\n• Permission problems\n\nPlease check the system logs for more details and try again."
 msgstr "Einige Updates konnten nicht erfolgreich installiert werden.\n\nDies könnte folgende Ursachen haben:\n• Netzwerkverbindungsprobleme\n• Paketkonflikte\n• Unzureichender Festplattenspeicher\n• Berechtigungsprobleme\n\nBitte überprüfen Sie die Systemprotokolle für weitere Details und versuchen Sie es erneut."
+
+# No updates dialog
+msgid "System is up to date"
+msgstr "System ist auf dem neuesten Stand"
+
+msgid "There are no updates available for your system.\n\nYour system is already running the latest versions of all packages."
+msgstr "Es sind keine Updates für Ihr System verfügbar.\n\nIhr System verwendet bereits die neuesten Versionen aller Pakete."
+
+msgid "Close Application"
+msgstr "Anwendung schließen"
