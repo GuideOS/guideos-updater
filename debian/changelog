@@ -1,12 +1,10 @@
-guideos-updater (4.1.0) unstable; urgency=medium
+guideos-updater (4.1.1) unstable; urgency=medium
 
   * Migrated from GTK 4 to Libadwaita for modern GNOME design
   * Replaced Gtk.Application with Adw.Application
   * Replaced Gtk.Window with Adw.ApplicationWindow
   * Implemented Adw.ToolbarView for better header bar integration
-  * Migrated to libAdapta for cross-desktop theme support
-  * Updated all dependencies to include libadapta-1 (gir1.2-adap-1)
-  * All Adw.* classes now provided by libAdapta with theme compatibility
+  * Updated all dependencies to include libadwaita-1
   * Added "No updates available" dialog with app close option
   * Improved German translations for new dialogs
   * Enhanced TreeView with proper expansion settings

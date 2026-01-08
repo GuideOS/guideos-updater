@@ -4,8 +4,8 @@ Main GUI Window for GuideOS Updater
 
 import gi
 gi.require_version('Gtk', '4.0')
-gi.require_version('Adap', '1')
-from gi.repository import Gtk, Adap as Adw, GLib, Gdk, Notify
+gi.require_version('Adw', '1')
+from gi.repository import Gtk, Adw, GLib, Gdk, Notify
 
 from utils.logger import Logger
 from utils.i18n import _
